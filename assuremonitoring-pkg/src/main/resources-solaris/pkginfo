@@ -1,0 +1,8 @@
+CLASSES="none"
+PKG=assuremonitoring
+NAME=${project.name}
+DESC=${project.description}
+VERSION=${assuremonitoring.rstate}
+VENDOR=Ericsson AB
+ARCH=sparc,i386
+CATEGORY=application,ericsson

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<!-- The default plugin name is the name of the plugin without the "-plugin" part -->
+<plugin name="rollingsnapshot" package="com.ericsson.monitoring.plugin.rollingsnapshot">
+
+    <property name="PLUGIN_VERSION" value="1.0"/>
+
+    <classpath>
+        <include name="pdk/lib" />
+    </classpath>
+
+    <config name="basic-config">
+        <!-- Since the command contains whitespace, the quotes are required -->
+        <option name="timeout"  description="The command timeout in seconds" default="60" />
+
+        <option name="logfile" description="The log file to parse"
+            default="/eniq/local_logs/rolling_snapshot_logs/prep_roll_snap.log" />
+        <option name="rollingsnapshot_script" description="The parsing script"
+            default="/opt/assuremonitoring-plugins/scripts/rollingsnapshot.pl" />
+    </config>
+
+    <filter name="template"
+        value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=&quot;%rollingsnapshot_script%&quot; -filename &quot;%logfile%&quot;:${alias}" />
+
+    <metrics name="rollingsnapshot-metrics">
+        <!--  The alias must be "Availability" (which is the default) -->
+        <metric name="Availability" indicator="true"
+                units="percentage"  interval="3600000"/>
+
+        <metric name="Time since last rolling snapshot"        alias="time_since_last_backup"       category="PERFORMANCE"
+                units="sec"        indicator="true"    collectionType="dynamic"
+                defaultOn="true"    interval="3600000" />
+
+    </metrics>
+
+    <server name="Rolling Snapshot" platforms="Solaris">
+
+        <config include="basic-config" />
+
+        <property name="HAS_BUILTIN_SERVICES" value="true"/>
+        <plugin type="autoinventory"    class="RollingSnapshotServerDetector" />
+        <plugin type="measurement"      class="org.hyperic.hq.product.MeasurementPlugin" />
+        <plugin type="control"          class="org.hyperic.hq.product.ScriptControlPlugin" />
+
+        <metrics include="rollingsnapshot-metrics" />
+
+    </server>
+</plugin>

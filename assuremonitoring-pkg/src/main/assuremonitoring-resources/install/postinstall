@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+#--------------------------------------------------------------------------
+# COPYRIGHT Ericsson 2014
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+#--------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------
+# GLOBAL SCRIPT VARIABLES
+#--------------------------------------------------------------------------
+
+PACKAGE_INSTALL_DIR=/opt/assuremonitoring-plugins
+ERICSSON_GLOBAL_ENV_FILE=${PACKAGE_INSTALL_DIR}/ericsson/etc/global.env
+
+#--------------------------------------------------------------------------
+# FUNCTIONS
+#--------------------------------------------------------------------------
+
+
+# Copy all the plugins to the Hyperic server ------------------------------
+copy_plugins_to_server() {
+	
+	if [ -d ${HYPERIC_SERVER_DIR} ]; then
+	
+		if [ ! -d ${HYPERIC_SERVER_PLUGIN_DIR} ]; then
+		
+			${_MKDIR} -p ${HYPERIC_SERVER_PLUGIN_DIR}
+			${_CHOWN} -R ${HYPERIC_USER}:${HYPERIC_GROUP} ${HYPERIC_SERVER_PLUGIN_DIR}
+			${_CHMOD} -R 750 ${HYPERIC_SERVER_PLUGIN_DIR}
+		fi
+	
+		
+		if [ -f ${PLUGINS_DIR}/*.jar ]; then
+        
+			${_SU} - ${HYPERIC_USER} -c "${_CP} ${PLUGINS_DIR}/*.jar ${HYPERIC_SERVER_PLUGIN_DIR}"
+		fi
+		
+		if [ -f ${PLUGINS_DIR}/*-plugin.xml ]; then
+        
+			${_SU} - ${HYPERIC_USER} -c "${_CP} ${PLUGINS_DIR}/*-plugin.xml ${HYPERIC_SERVER_PLUGIN_DIR}"
+		fi
+		
+	fi
+}
+#--------------------------------------------------------------------------
+
+
+
+
+# Create all required permissions for script execution --------------------
+create_script_permissions() {
+	
+	if [ -d ${HYPERIC_AGENT_DIR} ]; then
+	
+		for SCRIPT in `cat ${HYPERIC_SCRIPT_ACCESS_FILE}`
+		do
+		
+			${_EGREP} -i "${SCRIPT}" ${EXEC_ATTR_FILE} > /dev/null
+			EXEC_EXISTS=$?
+		
+			if [ ${EXEC_EXISTS} != 0 ]; then
+				${_ECHO} "${PROF_ATTR_NAME}:suser:cmd:::${SCRIPT}:uid=0" >> ${EXEC_ATTR_FILE}	
+			fi
+		
+		done
+	
+	fi
+}
+#--------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------
+
+
+
+# Set up a permissions ----------------------------------------------------
+set_permissions() {
+	if [ -d ${PACKAGE_INSTALL_DIR} ]; then
+		${_CHOWN} -R ${HYPERIC_USER}:${HYPERIC_GROUP} ${PACKAGE_INSTALL_DIR}
+		${_CHMOD} -R 750 ${PACKAGE_INSTALL_DIR}
+		pkgchk -f assuremonitoring
+	fi
+}
+#--------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------
+# EXECUTION
+#--------------------------------------------------------------------------
+
+# source the global profile
+. ${ERICSSON_GLOBAL_ENV_FILE}
+
+#set_permissions
+create_script_permissions
+copy_plugins_to_server

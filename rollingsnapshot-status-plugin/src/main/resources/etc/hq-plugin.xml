@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<plugin name="rolling-snapshot-status" package="com.ericsson.monitoring.plugin.rollingsnapshotstatus">
+    <property name="PLUGIN_VERSION" value="1.0"/>
+
+
+    <config name="basic-config">
+
+    <option name="timeout" description="The command timeout in seconds" default="60" />
+
+    </config>
+
+    <server name="Rolling Snapshot Status" description="ENIQ Rolling Snapshot Failure due to db corruption" platforms="Solaris">
+        <plugin type="autoinventory" class="RollingSnapStatusServerDetector"/>
+        <plugin type="measurement" class="org.hyperic.hq.product.MeasurementPlugin"/>
+        <plugin type="control" class="org.hyperic.hq.product.ScriptControlPlugin" />
+
+        <filter name="template"
+                value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=/opt/assuremonitoring-plugins/scripts/rollingsnapshot_status.pl:${alias}"/>
+
+
+    <!--  The alias must be "Availability" (which is the default) -->
+        <metric name="Availability"
+                indicator="true"
+                units="percentage"
+                interval="3600000"/>
+
+        <metric name="Rolling Snapshot Availability"
+                alias="rolling snapshot availability"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+    </server>
+</plugin>

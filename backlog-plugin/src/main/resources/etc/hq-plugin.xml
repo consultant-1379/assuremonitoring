@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<plugin name="backlog" package="com.ericsson.monitoring.plugin.backlog">
+    <property name="PLUGIN_VERSION" value="1.0"/>
+
+    <server name="Backlog Analysis" description="ENIQ Backlog" platforms="Solaris">
+        <plugin type="autoinventory" class="BacklogServerDetector"/>
+        <plugin type="measurement" class="org.hyperic.hq.product.MeasurementPlugin"/>
+
+        <filter name="template"
+                value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=%script% -function get_server_metrics:${alias}"/>
+
+        <metric name="Availability"
+                indicator="true"
+                units="percentage"
+                interval="900000"/>
+
+        <metric name="Number of Active Interfaces"
+                alias="activeInterfaces"
+                indicator="true"
+                units="none"
+                interval="900000"/>
+
+        <service name="Interface">
+            <filter name="template"
+                    value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=%script% -function get_service_metrics -interface %interface_name%:${alias}" />
+
+            <metric name="Availability"
+                    indicator="true"
+                    units="percentage"
+                    interval="900000"/>
+
+            <metric name="Number of Files in Backlog"
+                    indicator="true"
+                    alias="backlog"
+                    units="none"
+                    interval="900000"/>
+
+            <metric name="Number of Files Processed"
+                    indicator="true"
+                    alias="fileProcessed"
+                    units="none"
+                    interval="900000"/>
+
+        </service>
+    </server>
+</plugin>

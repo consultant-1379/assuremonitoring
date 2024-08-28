@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<plugin name="ombs-status" package="com.ericsson.monitoring.plugin.ombsstatus">
+    <property name="PLUGIN_VERSION" value="1.0"/>
+
+
+    <config name="basic-config">
+
+    <option name="timeout" description="The command timeout in seconds" default="60" />
+
+    </config>
+
+    <server name="OMBS Status" description="ENIQ OMBS Failure due to db corruption" platforms="Solaris">
+        <plugin type="autoinventory" class="OMBSStatusServerDetector"/>
+        <plugin type="measurement" class="org.hyperic.hq.product.MeasurementPlugin"/>
+        <plugin type="control" class="org.hyperic.hq.product.ScriptControlPlugin" />
+
+        <filter name="template"
+                value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=/opt/assuremonitoring-plugins/scripts/ombs_status.pl:${alias}"/>
+
+
+    <!--  The alias must be "Availability" (which is the default) -->
+        <metric name="Availability"
+                indicator="true"
+                units="percentage"
+                interval="3600000"/>
+
+        <metric name="OMBS Availability"
+                alias="ombs availability"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+    </server>
+</plugin>

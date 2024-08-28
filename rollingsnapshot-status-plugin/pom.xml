@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<parent>
+  <groupId>com.ericsson.eniq.monitoring</groupId>
+  <artifactId>assuremonitoring</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+</parent>
+
+ <modelVersion>4.0.0</modelVersion>
+  <groupId>rolling-snapshot-status-plugin</groupId>
+  <artifactId>rolling-snapshot-status-plugin</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+  <name>Eniq Monitoring for Rolling Snapshot failure due to DB Corruption</name>
+  <packaging>jar</packaging>
+    <dependencies>
+         <dependency>
+             <groupId>commons-logging</groupId>
+             <artifactId>commons-logging</artifactId>
+             <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>hq-common</groupId>
+            <artifactId>hq-common</artifactId>
+            <version>4.6.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource</groupId>
+            <artifactId>sigar</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>hq-pdk</groupId>
+            <artifactId>hq-pdk</artifactId>
+            <version>4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>hq-util</groupId>
+            <artifactId>hq-util</artifactId>
+            <version>4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.0</version>
+        </dependency>
+       <dependency>
+            <groupId>bsh</groupId>
+            <artifactId>bsh</artifactId>
+            <version>2.0b4</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.1_3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-parent</artifactId>
+            <version>2.2.0</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-script</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+    </dependencies>
+
+   <build>
+      <finalName>rolling-snapshot-status-plugin</finalName>
+      <outputDirectory>target/classes</outputDirectory>
+      <sourceDirectory>src/main/java</sourceDirectory>
+      <resources>
+         <resource>
+            <directory>src/main/resources</directory>
+         </resource>
+      </resources>
+   </build>
+
+</project>

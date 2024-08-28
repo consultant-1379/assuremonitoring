@@ -1,0 +1,85 @@
+#!/bin/sh
+#
+#--------------------------------------------------------------------------
+# COPYRIGHT Ericsson 2014
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson Inc. The programs may be used and/or copied only with written
+# permission from Ericsson Inc. or in accordance with the terms and
+# conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+#--------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------
+# GLOBAL SCRIPT VARIABLES
+#--------------------------------------------------------------------------
+
+
+HYPERIC_SERVER_DIR=/opt/hyperic-server
+HYPERIC_AGENT_DIR=/opt/hyperic-agent
+
+
+#--------------------------------------------------------------------------
+# GLOBAL COMMANDS
+#--------------------------------------------------------------------------
+
+
+OS_PLATFORM=`uname -s`
+
+if [ ${OS_PLATFORM} = "SunOS" ] ; then
+
+	_ECHO=/bin/echo
+	_UNAME=/bin/uname
+	
+else
+
+	# Linux
+	
+	_ECHO=/bin/echo
+	_UNAME=/bin/uname
+
+fi
+
+
+#--------------------------------------------------------------------------
+# FUNCTIONS
+#--------------------------------------------------------------------------
+
+
+# Check to make sure agent or the server is installed ---------------------
+check_agent_or_server() {
+	if [ ! -d ${HYPERIC_SERVER_DIR} ] && [ ! -d ${HYPERIC_AGENT_DIR} ]; then
+		check_agent_or_server_message
+		exit 1	
+	fi
+	
+}
+check_agent_or_server_message() {
+	${_ECHO} "\n\n\n\tHyperic plugins require the *Server* or *Agent* to be installed."
+	${_ECHO} "\tAborting installation.\n\n\n"
+}
+#--------------------------------------------------------------------------
+
+
+# Check env ---------------------------------------------------------------
+check_env() {
+	OS_PLATFORM=`${_UNAME} -s`
+	
+	if [ ${OS_PLATFORM} != "SunOS" ] && [ ${OS_PLATFORM} != "Linux" ]; then 
+		check_env_message
+		exit 1
+	fi
+}
+check_env_message() {
+ 	${_ECHO} "\n\n\n\tOS is not supported (${OS_PLATFORM})."
+	${_ECHO} "\tAborting installation.\n\n\n"
+}
+#--------------------------------------------------------------------------
+
+
+#--------------------------------------------------------------------------
+# EXECUTION
+#--------------------------------------------------------------------------
+
+check_agent_or_server
+check_env

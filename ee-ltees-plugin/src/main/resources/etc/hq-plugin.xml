@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<!-- The default plugin name is the name of the plugin without the "-plugin" part -->
+<plugin name="ee-ltees" package="com.ericsson.monitoring.plugin.ltees">
+
+    <property name="PLUGIN_VERSION" value="1.0"/>
+    <classpath>
+        <include name="pdk/lib" />
+    </classpath>
+
+    <config name="basic-config">
+        <!-- Since the command contains whitespace, the quotes are required -->
+        <option name="timeout"  description="The command timeout in seconds" default="600" />
+
+        <option name="ltees_keyword"
+                description="The keyword of the feature in log file."
+                default="EBSL.WF_LTEES_COUNTER" />
+
+        <option name="ltees_log_filename"
+                description="The complete log file name."
+                default="/eniq/log/sw_log/mediation_gw/wfinstr/wfinstr.log" />
+
+        <option name="ltees_perf_stat_script"
+                description="The complete log file name."
+                default="/opt/assuremonitoring-plugins/scripts/ltees_perf_stat.pl" />
+    </config>
+
+
+    <filter name="template"
+        value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=&quot;%ltees_perf_stat_script%&quot; -filename &quot;%ltees_log_filename%&quot; -keyword &quot;%ltees_keyword%&quot;:${alias}" />
+
+    <metrics name="ltees-metrics">
+        <!--  The alias must be "Availability" (which is the default) -->
+        <metric name="Availability"
+                indicator="true"
+                units="percentage"
+                interval="3600000"/>
+
+        <metric name="Counter Files Generated per Hour"
+                alias="processed_count"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="Events per Second"
+                alias="total_events_per_second"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="Files Consumed per Hour"
+                alias="files_per_hour"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="Volume per Hour"
+                alias="volume_per_hour"
+                category="PERFORMANCE"
+                units="GB"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+    </metrics>
+
+    <server name="EE Mediation-LTEES" platforms="Solaris">
+        <config include="basic-config" />
+        <plugin type="autoinventory"    class="com.ericsson.monitoring.plugin.ltees.EELteesDetector" />
+        <plugin type="measurement"      class="org.hyperic.hq.product.MeasurementPlugin" />
+        <plugin type="control"          class="org.hyperic.hq.product.ScriptControlPlugin" />
+        <metrics include="ltees-metrics" />
+    </server>
+</plugin>

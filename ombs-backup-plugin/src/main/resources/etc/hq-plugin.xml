@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<!-- The default plugin name is the name of the plugin without the "-plugin" part -->
+<plugin name="ombs-backup" package="com.ericsson.monitoring.plugin.ombs">
+
+    <property name="PLUGIN_VERSION" value="1.0"/>
+
+    <classpath>
+        <include name="pdk/lib" />
+    </classpath>
+
+    <config name="basic-config">
+        <!-- Since the command contains whitespace, the quotes are required -->
+        <option name="timeout"  description="The command timeout in seconds" default="60" />
+
+        <option name="logfile" description="The log file to parse"
+            default="/eniq/local_logs/backup_logs/prep_eniq_backup.log" />
+    </config>
+
+    <filter name="template"
+        value="exec:timeout=%timeout%,file=/opt/assuremonitoring-plugins/scripts/ombs_backup.pl,args=-filename &quot;%logfile%&quot;:${alias}" />
+
+    <metrics name="ombsbackup-metrics">
+        <!--  The alias must be "Availability" (which is the default) -->
+        <metric name="Availability" indicator="true"
+                units="percentage"  interval="3600000"/>
+
+        <metric name="Time since last successful backup"        alias="time_since_last_backup"       category="PERFORMANCE"
+                units="sec"        indicator="true"    collectionType="dynamic"
+                defaultOn="true"    interval="3600000" />
+
+    </metrics>
+
+    <!-- <help name="general-help"> </help> -->
+
+    <server name="OMBS Backup" platforms="Solaris">
+
+        <!-- <help include="general-help"/> -->
+
+        <config include="basic-config" />
+
+        <property name="HAS_BUILTIN_SERVICES" value="true"/>
+        <plugin type="autoinventory"    class="com.ericsson.monitoring.plugin.ombs.OMBSBackupServerDetector" />
+        <plugin type="measurement"      class="org.hyperic.hq.product.MeasurementPlugin" />
+        <plugin type="control"          class="org.hyperic.hq.product.ScriptControlPlugin" />
+
+        <metrics include="ombsbackup-metrics" />
+
+    </server>
+</plugin>

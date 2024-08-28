@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.ericsson.eniq</groupId>
+    <artifactId>integration</artifactId>
+    <version>1.0.134</version>
+  </parent>
+
+  <groupId>com.ericsson.eniq.monitoring</groupId>
+  <artifactId>assuremonitoring</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId} Project</name>
+
+  <modules>
+    <module>EE-SGEH-plugin</module>
+    <module>rollingsnapshot-plugin</module>
+    <module>ombs-backup-plugin</module>
+    <module>ee-ltees-plugin</module>
+    <module>ee-lteefa-plugin</module>
+    <module>backlog-plugin</module>
+    <module>ombs-status-plugin</module>
+    <module>rollingsnapshot-status-plugin</module>
+    <module>frop-backup-plugin</module>
+    <module>assuremonitoring-pkg</module>
+  </modules>
+</project>

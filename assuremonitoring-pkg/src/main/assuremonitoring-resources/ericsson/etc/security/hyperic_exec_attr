@@ -1,0 +1,8 @@
+/opt/assuremonitoring-plugins/scripts/sgeh_perf_stat.pl
+/opt/assuremonitoring-plugins/scripts/rollingsnapshot.pl
+/opt/assuremonitoring-plugins/scripts/ltees_perf_stat.pl
+/opt/assuremonitoring-plugins/scripts/lteefa_perf_stat.pl
+/opt/assuremonitoring-plugins/scripts/backlog.pl
+/opt/assuremonitoring-plugins/scripts/ombs_status.pl
+/opt/assuremonitoring-plugins/scripts/rollingsnapshot_status.pl
+/opt/assuremonitoring-plugins/scripts/frop_rollingsnapshot.pl

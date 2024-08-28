@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.ericsson.eniq.monitoring</groupId>
+    <artifactId>assuremonitoring</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>assuremonplugins</artifactId>
+  <packaging>${pkg.packaging}</packaging>
+  <name>Ericsson Assure Monitoring Plugins</name>
+  <description>Ericsson Assure Monitoring Plugins for Monitoring Tool</description>
+
+  <!-- Dependencies of Solaris Package can be added in below section -->
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/pkg-resources</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/resources-solaris</directory>
+                  <includes>
+                    <include>*</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution> 
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-2</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>directory-inline</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <finalName>solaris/assembled</finalName>
+          <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+          <descriptors>
+            <descriptor>src/main/assembly/pkg.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+	  
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>solaris-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <defaultUser>hyperic</defaultUser>
+          <defaultGroup>hyperic</defaultGroup>
+          <defaultFileMode>0755</defaultFileMode>
+          <pkginfo>${project.build.directory}/pkg-resources/pkginfo</pkginfo>
+          <generatedPrototype>
+            <iEntry>
+              <path>checkinstall</path>
+              <realPath>opt/assuremonitoring-plugins/lib/install/checkinstall</realPath>
+              <mode>0555</mode>
+              <user>root</user>
+              <group>root</group>
+            </iEntry>
+            <iEntry>
+              <path>postinstall</path>
+              <realPath>opt/assuremonitoring-plugins/lib/install/postinstall</realPath>
+              <mode>0555</mode>
+              <user>root</user>
+              <group>root</group>
+            </iEntry>
+            <directoryCollection>
+              <mode>0755</mode>
+              <user>root</user>
+              <group>root</group>
+              <includes>
+                <include>opt</include>
+                <include>opt/assuremonitoring-plugins/lib/install</include>
+              </includes>
+            </directoryCollection>
+            <fileCollection>
+              <mode>0555</mode>
+              <user>root</user>
+              <group>root</group>
+              <includes>
+                <include>opt/assuremonitoring-plugins/lib/install/*</include>
+              </includes>	
+            </fileCollection>
+            <fileCollection>
+              <mode>0555</mode>
+              <includes>
+                <include>opt/assuremonitoring-plugins/ericsson/etc/*</include>
+                <include>opt/assuremonitoring-plugins/ericsson/etc/os/*</include>
+                <include>opt/assuremonitoring-plugins/ericsson/etc/security/*</include>
+                <include>opt/assuremonitoring-plugins/lib/perlUtils/*</include>
+                <include>opt/assuremonitoring-plugins/scripts/*</include>
+              </includes>
+            </fileCollection>
+          </generatedPrototype>
+        </configuration>
+      </plugin>
+	  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5</version>
+        <executions>
+        <execution>
+          <phase>install</phase>
+          <id>instal-PKG-Artifact</id>
+          <goals>
+            <goal>install-file</goal>
+          </goals>
+          <configuration>
+            <file>target/solaris/assuremonitoring.pkg</file>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>assuremonitoring</artifactId>
+            <version>${project.version}</version>
+            <packaging>pkg</packaging>
+          </configuration>
+        </execution>
+        </executions>
+      </plugin> 
+    </plugins>
+  </build>
+</project>

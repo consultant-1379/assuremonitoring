@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin []>
+
+<!-- The default plugin name is the name of the plugin without the "-plugin" part -->
+<plugin name="EE-SGEH" package="com.ericsson.monitoring.plugin.sgeh">
+
+    <property name="PLUGIN_VERSION" value="1.0"/>
+    <classpath>
+        <include name="pdk/lib" />
+    </classpath>
+
+    <config name="basic-config">
+        <!-- Since the command contains whitespace, the quotes are required -->
+        <option name="timeout"  description="The command timeout in seconds" default="600" />
+
+        <option name="sgeh_keyword"
+                description="The keyword of the feature in log file."
+                default="SGEH.WF_SGEH_Processing_NFS" />
+
+        <option name="sgeh_log_filename"
+                description="The complete log file name."
+                default="/eniq/log/sw_log/mediation_gw/wfinstr/wfinstr.log" />
+
+        <option name="sgeh_perf_stat_script"
+                description="The complete log file name."
+                default="/opt/assuremonitoring-plugins/scripts/sgeh_perf_stat.pl" />
+    </config>
+
+
+    <filter name="template"
+        value="exec:timeout=%timeout%,file=/usr/bin/pfexec,args=&quot;%sgeh_perf_stat_script%&quot; -filename &quot;%sgeh_log_filename%&quot; -keyword &quot;%sgeh_keyword%&quot;:${alias}" />
+
+    <metrics name="sgeh-metrics">
+        <!--  The alias must be "Availability" (which is the default) -->
+        <metric name="Availability"
+                indicator="true"
+                units="percentage"
+                interval="3600000"/>
+
+        <metric name="2G/3G Success Events per second"
+                alias="succ23_rate"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="2G/3G Error Events per second"
+                alias="err23_rate"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="4G Success Events per second"
+                alias="succ4_rate"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="4G Error Events per second"
+                alias="err4_rate"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="Total Events per Second"
+                alias="event_rate"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="Files per Hour"
+                alias="files"
+                category="PERFORMANCE"
+                units="none"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+
+        <metric name="Volume per Hour"
+                alias="volume"
+                category="PERFORMANCE"
+                units="GB"
+                indicator="true"
+                collectionType="dynamic"
+                defaultOn="true"
+                interval="3600000" />
+    </metrics>
+
+    <help name="general-help">
+    <![CDATA[
+        <h1>Notes</h1>
+        <ol>
+        <li><p>When using plugin, the sgeh log file should be accessible from hyperic user:</p></li>
+        </ol>
+    ]]>
+    </help>
+
+    <server name="EE Mediation-SGEH" platforms="Solaris">
+        <help include="general-help"/>
+        <config include="basic-config" />
+        <plugin type="autoinventory"    class="com.ericsson.monitoring.plugin.sgeh.EESgehDetector" />
+        <plugin type="measurement"      class="org.hyperic.hq.product.MeasurementPlugin" />
+        <plugin type="control"          class="org.hyperic.hq.product.ScriptControlPlugin" />
+        <metrics include="sgeh-metrics" />
+    </server>
+</plugin>
